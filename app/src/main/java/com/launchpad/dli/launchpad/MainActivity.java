@@ -22,6 +22,9 @@ import android.widget.TextView;
 
 import com.launchpad.dli.launchpad.fragment.ConfigDialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     final static String DEBUG_TAG = "mainactivity";
@@ -43,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
     static String twoFingerDragConfig;
     static String threeFingerDragConfig;
     static String fourFingerDragConfig;
+
+    static Boolean twoFingerDragIncluded;
+    static Boolean threeFingerDragIncluded;
+    static Boolean fourFingerDragIncluded;
+
+    Intent wazeIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( "waze://?ll=27.3969313,-82.4425731&navigate=yes" ) );;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
                         switch (fingerCount){
                             case 2:
-                                String url = "waze://?ll=27.3969313,-82.4425731&navigate=yes";
-                                Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse( url ) );
-                                startActivity( intent );
+                                startActivity( wazeIntent );
                                 break;
                             case 3:
                                 openApp(this, threeFingerDragConfig);
@@ -146,6 +153,32 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void launchSelectedApps() {
+        PackageManager manager = this.getPackageManager();
+
+        List<String> packageNamesSelected = new ArrayList<>();
+        if(twoFingerDragIncluded)
+            packageNamesSelected.add(twoFingerDragConfig);
+        if(threeFingerDragIncluded)
+            packageNamesSelected.add(threeFingerDragConfig);
+        if(fourFingerDragIncluded)
+            packageNamesSelected.add(fourFingerDragConfig);
+
+        Intent[] intents = new Intent[packageNamesSelected.size()+1];
+        int i=0;
+
+        intents[i++] = wazeIntent;
+
+        for(String packageName: packageNamesSelected){
+            Intent intent = manager.getLaunchIntentForPackage(packageName);
+            if (intent != null) {
+                intents[i++] = intent;
+            }
+        }
+
+        this.startActivities(intents);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -171,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.menu_item2:
+                return true;
+
+            case R.id.menu_item3:
+                launchSelectedApps();
                 return true;
 
             default:
@@ -208,6 +245,10 @@ public class MainActivity extends AppCompatActivity {
         twoFingerDragConfig = sharedPreferences.getString("2FingerDrag","empty value");
         threeFingerDragConfig = sharedPreferences.getString("3FingerDrag","empty value");
         fourFingerDragConfig = sharedPreferences.getString("4FingerDrag","empty value");
+
+        twoFingerDragIncluded = sharedPreferences.getBoolean("2FingerIncluded", false);
+        threeFingerDragIncluded = sharedPreferences.getBoolean("3FingerIncluded", false);
+        fourFingerDragIncluded = sharedPreferences.getBoolean("4FingerIncluded", false);
     }
 
 }

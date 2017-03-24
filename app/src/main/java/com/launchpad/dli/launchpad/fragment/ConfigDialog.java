@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,6 +28,10 @@ public  class ConfigDialog extends DialogFragment {
     EditText threeFingerText;
     EditText fourFingerText;
 
+    CheckBox twoFingerCheckbox;
+    CheckBox threeFingerCheckbox;
+    CheckBox fourFingerCheckbox;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -40,6 +45,10 @@ public  class ConfigDialog extends DialogFragment {
         twoFingerText = (EditText) view.findViewById(R.id.two_finger_drag_action);
         threeFingerText = (EditText) view.findViewById(R.id.three_finger_drag_action);
         fourFingerText = (EditText) view.findViewById(R.id.four_finger_drag_action);
+
+        twoFingerCheckbox = (CheckBox) view.findViewById(R.id.two_finger_drag_action_included);
+        threeFingerCheckbox = (CheckBox) view.findViewById(R.id.three_finger_drag_action_included);
+        fourFingerCheckbox = (CheckBox) view.findViewById(R.id.four_finger_drag_action_included);
 
         read();
 
@@ -60,9 +69,15 @@ public  class ConfigDialog extends DialogFragment {
 
     private void save() {
         SharedPreferences.Editor editor = this.getActivity().getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+
         editor.putString("2FingerDrag",twoFingerText.getText().toString());
         editor.putString("3FingerDrag",threeFingerText.getText().toString());
         editor.putString("4FingerDrag",fourFingerText.getText().toString());
+
+        editor.putBoolean("2FingerIncluded", twoFingerCheckbox.isChecked());
+        editor.putBoolean("3FingerIncluded", threeFingerCheckbox.isChecked());
+        editor.putBoolean("4FingerIncluded", fourFingerCheckbox.isChecked());
+
         editor.commit();
     }
 
@@ -72,6 +87,10 @@ public  class ConfigDialog extends DialogFragment {
         twoFingerText.setText(sharedPreferences.getString("2FingerDrag","empty value"));
         threeFingerText.setText(sharedPreferences.getString("3FingerDrag","empty value"));
         fourFingerText.setText(sharedPreferences.getString("4FingerDrag","empty value"));
+
+        twoFingerCheckbox.setChecked(sharedPreferences.getBoolean("2FingerIncluded", false));
+        threeFingerCheckbox.setChecked(sharedPreferences.getBoolean("3FingerIncluded", false));
+        fourFingerCheckbox.setChecked(sharedPreferences.getBoolean("4FingerIncluded", false));
     }
 }
 
