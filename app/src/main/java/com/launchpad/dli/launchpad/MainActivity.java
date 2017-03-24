@@ -167,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
         Intent[] intents = new Intent[packageNamesSelected.size()+1];
         int i=0;
 
-        intents[i++] = wazeIntent;
-
         for(String packageName: packageNamesSelected){
             Intent intent = manager.getLaunchIntentForPackage(packageName);
             if (intent != null) {
@@ -176,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        intents[i++] = wazeIntent;
+        
         this.startActivities(intents);
     }
 
